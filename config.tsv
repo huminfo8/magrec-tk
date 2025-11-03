@@ -1,0 +1,6 @@
+genecat	/ei/projects/c/c0293548-5d3d-418c-9de2-db0fcffd25e9/data/CRC.Selective/GeneCat_allPlus	#GeneCat directory
+outdir	/ei/projects/c/c0293548-5d3d-418c-9de2-db0fcffd25e9/PipelineNxt/Out	#Output directory, if you not specified, then the results will be in "intra_phylo" directory
+tempdir	/ei/projects/c/c0293548-5d3d-418c-9de2-db0fcffd25e9/scratch	#Scratch directory
+mgslist	/ei/projects/c/c0293548-5d3d-418c-9de2-db0fcffd25e9/PipelineNxt/mgs.tsv	#If you speficied, then the pipeline only provides the relevant results
+param	/ei/projects/c/c0293548-5d3d-418c-9de2-db0fcffd25e9/PipelineNxt/param.tsv	#ParameterFile
+env	/hpc-home/ced24kag/micromamba/envs/MAGRecTK	#EnvPath
