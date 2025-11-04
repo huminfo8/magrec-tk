@@ -9,7 +9,7 @@ param = pd.read_table(config.at['param', 'path'], index_col=0 ,names=['value'])
 for index in config.index:
     if config.at[index, 'path'] == '__NaNPATH__':
         if index == 'outdir':
-            config.at[index, 'path'] = config.at['genecat', 'path'] + os.sep + 'Bin_SB' + 'intra_phylo'
+            config.at[index, 'path'] = config.at['genecat', 'path'] + os.sep + 'Bin_SB' + os.sep + 'intra_phylo'
         elif index == 'tempdir':
             config.at[index, 'path'] = config.at['outdir', 'path'] + os.sep + "MAGRecTK"
         elif index == 'mgslist':
