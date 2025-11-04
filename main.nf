@@ -46,8 +46,6 @@ process SampleListGet {
 
         IFS=\${IFSback}
 
-
-
         if [ ${cfg.mgslist} == "ALL" ];then
             cat ${cfg.genecat}/Bin_SB/SB.clusters.obs | tail -n +2| cut -f 1 > MGS.txt
         else
@@ -82,7 +80,6 @@ process Long_CheckMProfile {
         val(true), emit: long_done
     script:
         """  
-        echo "hello" > temp.tsv
         Mapfile=${cfg.genecat}/LOGandSUB/map.0.txt
         SampleNum=`cat \${Mapfile} | grep -w ${filename}| wc -l`
 
@@ -96,7 +93,6 @@ process Long_CheckMProfile {
             tail -n +2 \${Dirname}/AssmblGrp_${filename}/metag/Binning/SB/\${sampleRepName}.cm2 > "\${sampleRepName}M\${SampleNum}.tsv"
         fi
         
-        cat \${Mapfile} | grep -w ${filename}
         """
 }
 
@@ -164,8 +160,8 @@ process CheckMFilter {
         """
 }
 
-process MAGConstruction {
-    tag "MAGConstruction"
+process MAGRecovery {
+    tag "MAGRecovery"
     publishDir "${cfg.outdir}/${filename}/Link"     , pattern:"*.tsv", mode: "copy"
     publishDir "${cfg.outdir}/${filename}/Fasta"     , pattern:"*.fa.gz", mode: "copy"
 
@@ -254,7 +250,7 @@ workflow {
     def (checkM_tsv_ch, checkMdone) = CheckMFilter(combined)
     
     def combined_checkM = mgsListpath.combine(checkMdone)
-    def (fasta_tsv_ch, fa_ch, log_ch) = MAGConstruction(combined_checkM)
+    def (fasta_tsv_ch, fa_ch, log_ch) = MAGRecovery(combined_checkM)
 
 
 }
