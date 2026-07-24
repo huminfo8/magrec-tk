@@ -50,7 +50,7 @@ if [ -f $configFile ];then
     echo -e ">>>LOG\tTEMPDIR\t$TMPDIR"
     export NXF_TEMP=${TMPDIR}
     export NXF_DISABLE_CHECK_LATEST=true #Deactivate
-    export NXF_OPTS='-Xms256m -Xmx1g -XX:MaxRAMPercentage=40 -Djava.io.tmpdir='"$TMPDIR"' -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ErrorFile='"$TMPDIR"'/hs_err_pid%p.log'
+    export NXF_OPTS='-Xms1g -Xmx8g -Djava.io.tmpdir='"$TMPDIR"' -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ErrorFile='"$TMPDIR"'/hs_err_pid%p.log'
     nextflow run main.nf --params-file config.json
     nextflow clean -f
 
