@@ -12,89 +12,89 @@ println "MGS List (if not specified, ALL):\t${cfg.mgslist}"
 println "Parameter to be used:\t${cfg.param}"
 println "Working Environment:\t${cfg.env}"
 
-// process SampleListGet {
-//     tag "SampleListGet"
-//     publishDir "${cfg.outdir}/MAGQuality", mode: 'copy' 
+process SampleListGet {
+    tag "SampleListGet"
+    publishDir "${cfg.outdir}/MAGQuality", mode: 'copy' 
 
-//     output:
-//         path "*.txt", emit: tsv
-//     script:
-//         """
-//         Mapfile=${cfg.genecat}/LOGandSUB/map.0.txt
+    output:
+        path "*.txt", emit: tsv
+    script:
+        """
+        Mapfile=${cfg.genecat}/LOGandSUB/map.0.txt
 
-//         IFSback=\${IFS}
-//         IFS=\$'\n'
-//         echo "Sample" > Cross_sampeId_temp.txt
-//         echo "Sample" > Long_sampeId_temp.txt
-//         for line in `cat \${Mapfile}| grep -v "#"`;do
-//             Judge=`echo \${line}| cut -f 3`
-//             if [ \${#Judge} == "0" ];then
-//                 echo -e "Listed\t\${line}| cut -f 1"
-//                 echo \${line}| cut -f 1 >> Cross_sampeId_temp.txt
-//             else
-//                 echo -e "Listed\t\${line}| cut -f 3"
-//                 echo \${line}| cut -f 3 >> Long_sampeId_temp.txt
+        IFSback=\${IFS}
+        IFS=\$'\n'
+        echo "Sample" > Cross_sampeId_temp.txt
+        echo "Sample" > Long_sampeId_temp.txt
+        for line in `cat \${Mapfile}| grep -v "#"`;do
+            Judge=`echo \${line}| cut -f 3`
+            if [ \${#Judge} == "0" ];then
+                echo -e "Listed\t\${line}| cut -f 1"
+                echo \${line}| cut -f 1 >> Cross_sampeId_temp.txt
+            else
+                echo -e "Listed\t\${line}| cut -f 3"
+                echo \${line}| cut -f 3 >> Long_sampeId_temp.txt
 
-//             fi
-//         done
+            fi
+        done
 
-//         cat Cross_sampeId_temp.txt | tail -n +2 > Cross_sampeId.txt
-//         rm Cross_sampeId_temp.txt
+        cat Cross_sampeId_temp.txt | tail -n +2 > Cross_sampeId.txt
+        rm Cross_sampeId_temp.txt
 
-//         cat Long_sampeId_temp.txt | tail -n +2| sort|uniq > Long_sampeId.txt
-//         rm Long_sampeId_temp.txt
+        cat Long_sampeId_temp.txt | tail -n +2| sort|uniq > Long_sampeId.txt
+        rm Long_sampeId_temp.txt
 
-//         IFS=\${IFSback}
+        IFS=\${IFSback}
 
-//         if [ ${cfg.mgslist} == "ALL" ];then
-//             cat ${cfg.genecat}/Bin_SB/SB.clusters.obs | tail -n +2| cut -f 1 > MGS.txt
-//         else
-//             cp ${cfg.mgslist} MGS.txt
-//         fi
+        if [ ${cfg.mgslist} == "ALL" ];then
+            cat ${cfg.genecat}/Bin_SB/SB.clusters.obs | tail -n +2| cut -f 1 > MGS.txt
+        else
+            cp ${cfg.mgslist} MGS.txt
+        fi
         
-//         """
-// }
-// process Cross_CheckMProfile {
-//     tag "Cross_CheckMProfile"
-//     publishDir "${cfg.tempdir}/Cross_CheckMProfile", mode: 'copy' 
+        """
+}
+process Cross_CheckMProfile {
+    tag "Cross_CheckMProfile"
+    publishDir "${cfg.tempdir}/Cross_CheckMProfile", mode: 'copy' 
 
-//     input: 
-//         val(filename)
-//     output:
-//         path "*.tsv"
-//         val(true), emit: cross_done
-//     script:
-//         """  
-//         Dirname=`dirname ${cfg.genecat}` 
-//         tail -n +2 \${Dirname}/${filename}/assemblies/metag/Binning/SB/${filename}.cm2 > "${filename}.tsv"
-//         """
-// }
-// process Long_CheckMProfile {
-//     tag "Long_CheckMProfile"
-//     publishDir "${cfg.tempdir}/Long_CheckMProfile", mode: 'copy' 
+    input: 
+        val(filename)
+    output:
+        path "*.tsv"
+        val(true), emit: cross_done
+    script:
+        """  
+        Dirname=`dirname ${cfg.genecat}` 
+        tail -n +2 \${Dirname}/${filename}/assemblies/metag/Binning/SB/${filename}.cm2 > "${filename}.tsv"
+        """
+}
+process Long_CheckMProfile {
+    tag "Long_CheckMProfile"
+    publishDir "${cfg.tempdir}/Long_CheckMProfile", mode: 'copy' 
 
-//     input: 
-//         val(filename)
-//     output:
-//         path "*.tsv", emit: tsv
-//         val(true), emit: long_done
-//     script:
-//         """  
-//         Mapfile=${cfg.genecat}/LOGandSUB/map.0.txt
-//         SampleNum=`cat \${Mapfile} | grep -w ${filename}| wc -l`
+    input: 
+        val(filename)
+    output:
+        path "*.tsv", emit: tsv
+        val(true), emit: long_done
+    script:
+        """  
+        Mapfile=${cfg.genecat}/LOGandSUB/map.0.txt
+        SampleNum=`cat \${Mapfile} | grep -w ${filename}| wc -l`
 
-//         if [ \${SampleNum} = 1 ];then
-//             sample=`cat \${Mapfile} | grep -w ${filename}|cut -f 1`
-//             Dirname=`dirname ${cfg.genecat}` 
-//             tail -n +2 \${Dirname}/\${sample}/assemblies/metag/Binning/SB/\${sample}.cm2 > "\${sample}.tsv"
-//         else
-//             sampleRepName=`cat \${Mapfile} | grep -w ${filename}|tail -n 1|cut -f 1`
-//             Dirname=`dirname ${cfg.genecat}` 
-//             tail -n +2 \${Dirname}/AssmblGrp_${filename}/metag/Binning/SB/\${sampleRepName}.cm2 > "\${sampleRepName}M\${SampleNum}.tsv"
-//         fi
+        if [ \${SampleNum} = 1 ];then
+            sample=`cat \${Mapfile} | grep -w ${filename}|cut -f 1`
+            Dirname=`dirname ${cfg.genecat}` 
+            tail -n +2 \${Dirname}/\${sample}/assemblies/metag/Binning/SB/\${sample}.cm2 > "\${sample}.tsv"
+        else
+            sampleRepName=`cat \${Mapfile} | grep -w ${filename}|tail -n 1|cut -f 1`
+            Dirname=`dirname ${cfg.genecat}` 
+            tail -n +2 \${Dirname}/AssmblGrp_${filename}/metag/Binning/SB/\${sampleRepName}.cm2 > "\${sampleRepName}M\${SampleNum}.tsv"
+        fi
         
-//         """
-// }
+        """
+}
 
 process CheckMFilter {
     tag "CheckMFilter"
@@ -249,8 +249,8 @@ workflow {
     def combined = mgsListpath.combine(all_done)
     def (checkM_tsv_ch, checkMdone) = CheckMFilter(combined)
     
-    def combined_checkM = mgsListpath.combine(checkMdone)
-    def (fasta_tsv_ch, fa_ch, log_ch) = MAGRecovery(combined_checkM)
+    // def combined_checkM = mgsListpath.combine(checkMdone)
+    // def (fasta_tsv_ch, fa_ch, log_ch) = MAGRecovery(combined_checkM)
 
 
 }
